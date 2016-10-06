@@ -1,0 +1,312 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools} %More math! (For dscases)
+\usepackage{hyperref} %HTML package
+\usepackage{pgfplots} %Makes plots in LaTeX
+\usepackage{tikz} %Also tikz?
+\usepackage{bm} %makes vectors bold
+\usepackage{bbm} %Blackboard bold 1
+\usepgfplotslibrary{fillbetween}%Let's me fill between named plots
+\usepackage{graphicx} %import pics
+
+\usepackage[noend]{algpseudocode} %Algorithms
+\usepackage{algorithm}
+
+\graphicspath{ {Python\_figs/} }
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{ \normalfont\scshape} % Make all sections the default font and small caps
+
+
+\renewcommand{\thesubsection}{\alph{subsection}} %Make subsections start with letters
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{placeins}
+
+\usepackage{listings}
+\lstset{language=Python}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	Assignment 4}
+
+\author{Benjamin Jakubowski} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Illustrating randomized quicksort}
+
+We illustrate the operation of randomized quicksort on the array
+\[A = [19, 2, 11, 14, 7, 17, 4, 3, 5, 15]\]
+by showing the values in array $A$ after each call to \texttt{random\_partition}. Note the index is 0-indexed (since randomized quicksort was implemented in Python).
+
+\input{q1_table.tex}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+\section{Longest and shortest path in quicksort recursion tree}
+
+Let $0 < \alpha \leq 1/2$ be a constant split proportion in the quicksort recursion tree (such that at every level of quicksort the splits are in
+the proportion $1 - \alpha$ to $\alpha$). Then the shortest path in the recursion tree is the path getting $\alpha$ of the work on each split, and the longest path in the tree is the path getting $1 - \alpha$ of the work on each split. Now note the tree grows until $p = r$, i.e. the leaf nodes have a single (trivially sorted) subarray.
+
+Thus, the longest path is length $\ell$ where
+
+\begin{align*}
+n (1 - \alpha)^\ell & \approx 1  \\
+\implies \qquad{} (1 - \alpha)^\ell & \approx 1/n  \\
+\implies \qquad{} \ell \log(1 - \alpha) & \approx \log(1/n) \\
+\implies \qquad{} \ell & \approx -\log(n)/\log(1 - \alpha) 
+\end{align*}
+
+So (ignoring integer roundoff), we have
+\[\ell \approx -\log(n)/\log(1 - \alpha)\]
+
+Similarly, the shortest path is of length $\ell$ where
+
+\begin{align*}
+n (\alpha)^\ell & \approx 1\\
+\implies \qquad{} (\alpha)^\ell & \approx 1/n \\
+\implies \qquad{} \ell \log(\alpha) & \approx \log(1/n) \\
+\implies \qquad{} \ell & \approx -\log(n)/\log(\alpha)
+\end{align*}
+
+So (again ignoring integer roundoff) we have
+\[\ell \approx -\log(n)/\log(\alpha)\]
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 3
+%----------------------------------------------------------------------------------------
+\section{Probability of a split more balanced than $1 - \alpha$ : $\alpha$}
+
+Let $A = [a_1 \cdots a_n]$ be a random array. Then let $\pi = [\pi_1 \cdots \pi_n]$ be the permutation that stably sorts $A$ (i.e. such that $Z = [A[\pi_1] \cdots A[\pi_n]]$ is sorted). Then (letting $r$ be the pivot index), since $A$ is random, the probability $A[r] = A[\pi_i] = 1/n$ for all $i \in \{1, \cdots, n\}$.\\
+
+Now let $A[r] = A[\pi_j]$ be fixed (for some $j \in \{1, \cdots, n\}$). Then the splits produced by \texttt{partition} are \emph{as or less} balanced than those produced by pivoting on $A[r] = A[\pi_k]$ for
+
+\[k \in \{1, \cdots, \min\{j, n - (j - 1)\}\} \cup \{\max\{j, n - (j - 1)\}, \cdots, n\} = S\]
+ 
+Note we let $S$ represent this set to ease notation. \\
+
+Thus, the probability of \texttt{partition} producing splits that are \emph{as or less} balanced than those obtained by pivoting on $A[r] = A[\pi_j]$ is
+
+\[P(\textrm{As or less balanced splits}) = \sum_{k \in S} \frac{1}{n}\]
+
+Now note
+\[|S| \approx 2 (\alpha (n-1) + 1)\]
+since
+\[|\{1, \cdots, \min\{j, n - (j - 1)\}\}| = |\{1, \cdots, \min\{j, n - (j - 1)\}\}| \approx \alpha (n-1) + 1\]
+
+Thus
+
+\begin{align*}
+P(\textrm{As or less balanced splits}) &= \sum_{k \in S} \frac{1}{n}\\
+							 &\approx 2(\alpha (n-1) + 1) \frac{1}{n}\\
+							 &= 2 \alpha - 2\alpha/n + 2/n\\
+							 &\approx 2 \alpha
+\end{align*}
+
+Since $2 \alpha - 2\alpha/n + 2/n \approx 2 \alpha$ for large $n$,
+
+Hence
+
+\[P(\textrm{More balanced splits}) = 1 - P(\textrm{As or less balanced splits}) \approx 1 - 2 \alpha\]
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+\section{Maximum of $q^2 + (n - q - 1)^2$}
+
+We show $q^2 + (n - q - 1)^2$ achieves a maximum over $q = 0, 1, \cdots, n - 1$ when $q = 0$ or $q = n -1$.
+
+First, note
+\begin{align*}
+\frac{\textrm{d}}{\textrm{d}q} [q^2 + (n - q - 1)^2] &= 2 q + 2 (n - q - 1)(-1) \\
+	&= 2q - 2n + 2q +2\\
+	&= 4q - 2n + 2
+\end{align*}
+
+Then setting this first derivative to zero yields
+\begin{align*}
+4q - 2n + 2 &= 0 \\
+\implies \qquad{} q &= 1/2(n-1)
+\end{align*}
+
+Next, we check the second derivative at this critical point:
+
+\begin{align*}
+\frac{\textrm{d}^2}{\textrm{d}^2q} [q^2 + (n - q - 1)^2] &= \frac{\textrm{d}}{\textrm{d}q} [4q - 2n + 2] \\
+	&= 4 > 0
+\end{align*}
+
+Since the second derivative is positive this is a minimum. Thus, we are left checking the boundaries.
+
+When $q = 0$
+\[q^2 + (n - q - 1)^2 = 0^2 + (n - 0 - 1)^2 = (n-1)^2\]
+
+When $q = (n-1)$
+\[q^2 + (n - q - 1)^2 = (n-1)^2 + (n - (n-1) - 1)^2 = (n-1)^2\]
+
+Also,
+\[4q - 2n + 2 \Bigr|_{q = 0} = -2n + 2 < 0 \qquad{} \forall n > 1\]
+so this function is decreasing at $q = 0$, making this boundary a local maximum.
+
+\[4q - 2n + 2 \Bigr|_{q = n-1} = 4n  - 4 - 2n + 2 = 2n - 2 > 0 \qquad{} \forall n > 1\]
+so this function is increasing at $q = n-1$, making this boundary a local maximum.
+
+Thus, the maximum is achieved at $q = 0$ and $q = 1$.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 5
+%----------------------------------------------------------------------------------------
+\section{Quicksort's best-case running time is $\Omega(n \log n)$}
+
+Let $T(n)$ be the best-case running time for quicksort on an array $A$ of size $n$.
+
+Then the recurrence is
+\[T(n) = \min_{0 \leq q \leq n-1} \left[T(q) + T(n - q - 1)\right] + \Theta(n)\]
+
+We guess $T(q) \geq c q \log q$ for all $q < n$ (i.e. this is our strong inductive hypothesis).
+
+Then
+
+\[T(n) = \min_{0 \leq q \leq n-1} \left[c q \log q + c(n - q - 1)\log q\right] + \Theta(n)\]
+
+Now we find the minimum over $0 \leq q \leq n-1$ by setting the first derivative to zero and solving for $q$. 
+
+\begin{align*}
+0 &= \frac{\textrm{d}}{\textrm{d}q} \left[c q \log q + c(n - q - 1)\log q\right] \\
+	&= \left[q \frac{1}{q} + \log q + \left(-\frac{n - q - 1}{n - q - 1} - \log(n - q  - 1)\right)\right] \\
+	&= 1 + \log q - 1 - \log(n - q - 1) \\
+	&= \log q - \log(n - q - 1) \\
+\implies \qquad{} 2^0 &= 2^{\log q - \log(n - q - 1)} \\
+1 &= \frac{q}{n - q - 1} \\
+(n - q - 1) &= q \\
+q &= 1/2 (n - 1)
+\end{align*}
+
+Next, we check the second derivative:
+
+\begin{align*}
+\frac{\textrm{d}^2}{\textrm{d}^2q} \left[c q \log q + c(n - q - 1)\log q\right] & = \frac{\textrm{d}}{\textrm{d}q} \left[\log q - \log(n - q - 1)\right] \\
+	&= \frac{1}{q} - \frac{1}{n - q - 1} \\
+\implies \qquad{} \frac{\textrm{d}^2}{\textrm{d}^2q}\Bigr|_{q = 1/2(n-1)} &= \frac{1}{1/2(n-1)} - \frac{1}{n - (1/2(n-1)) - 1} \\
+	&=  \frac{1}{1/2(n-1)} -  \frac{1}{1/2(n-1)} \\
+	&= 0
+\end{align*}
+
+Since the second derivative is zero, we consider the first derivative at $q = 1/2(n-1) \pm \epsilon$:
+
+\[\log\left(1/2(n-1) + \epsilon \right) + \log\left(n - \left(1/2(n-1) + \epsilon \right) - 1 \right) = \log\left(1/2(n-1) + \epsilon \right) + \log\left(1/2(n-1) - \epsilon \right)\]
+
+Which is negative when $\epsilon < 0$, and positive when $\epsilon > 0$. Hence the objective function is decreasing for $q < 1/2(n-1)$ and increasing for $q > 1/2(n-1)$, so the function achieves a minimum at $q = 1/2(n-1)$.
+
+Next, substituting into our original expression for $T(n)$ yields
+
+\begin{align*}
+T(n) &= \left[c \cdot q_{\min} \log (q_{\min}) + c \cdot (n - q_{\min} - 1) \log (n - q_{\min} - 1)\right] + \Theta(n) \\
+	&= \left[c \cdot (1/2(n-1)) \log (1/2(n-1)) + c \cdot (n - (1/2(n-1)) - 1) \log (n - (1/2(n-1)) - 1)\right] + \Theta(n) \\
+	&= \left[c \cdot (1/2(n-1)) \log (1/2(n-1)) + c \cdot (1/2(n-1)) \log (1/2(n-1))\right] + \Theta(n) \\
+	&= \left[2c \cdot (1/2(n-1)) \log (1/2(n-1)) \right] + \Theta(n) \\
+	&= \left[c \cdot (n-1) \log (1/2(n-1)) \right] + \Theta(n) \\
+	&= \left[c \cdot (n-1) \left(\log (n-1)-\log(2) \right) \right] + \Theta(n) \\
+	&= \left[c \cdot (n-1) \left(\log (n-1)-1 \right) \right] + \Theta(n) \\
+	&= c \cdot (n-1) \log (n-1) - c\cdot(n - 1) + \Theta(n) \\
+	&= c \cdot (n-1)\log (n(1 -1/n))- c\cdot(n - 1) + \Theta(n) \\
+	&= c \cdot (n-1)\left(\log (n) + \log(1 -1/n)\right)- c\cdot(n - 1) + \Theta(n) \\
+	&= c \cdot n \log (n) - c \log (n) + c\cdot n \log(1 -1/n) - c  \log(1 -1/n) - c\cdot(n - 1) + \Theta(n) \\
+\end{align*}
+
+Thus, to show
+\[T(n) > c \cdot n \log (n)\]
+we need to show that there exists some $c$ such that for all $n > n_0$
+\[- c \log (n) + c\cdot n \log(1 -1/n) - c  \log(1 -1/n) - c\cdot(n - 1) + \Theta(n) < 0\]
+
+Well,
+
+\begin{align*}
+&- c \log (n) + c\cdot n \log(1 -1/n) - c  \log(1 -1/n) - c\cdot(n - 1) + \Theta(n)\\
+&\qquad{}= c (1 - \log(1 -1/n)  - \log (n)) + c\left(\log(1 -1/n) - 1\right) n + \Theta(n)
+\end{align*}
+
+Next, note $ c (1 - \log(1 -1/n)  - \log (n)) < 0 $ for any reasonably large $n$ (i.e. greater than $n = 4$), so if
+\[ c\left(\log(1 -1/n) - 1\right) n + \Theta(n)< 0\]
+
+then clearly
+\[c (1 - \log(1 -1/n)  - \log (n)) + c\left(\log(1 -1/n) - 1\right) n + \Theta(n) < 0 \]
+
+Similarly, note
+\[c\left(\log(1 -1/n) - 1\right) < -c\]
+
+so again if
+\[ -c n + \Theta(n)< 0\]
+then
+\[ c\left(\log(1 -1/n) - 1\right) n + \Theta(n)< 0\]
+
+Thus all we need to do is find $c$ such that 
+\[ -c n + \Theta(n)< 0\]
+
+But that is obviously possible- simply take $c = 2\cdot c_1$, where $c_1$ is the constant hidden in the lower bound implied by $\Theta(n)$.
+
+Thus, we have found a $c$ such that for all $n > n_0$,
+\[- c \log (n) + c\cdot n \log(1 -1/n) - c  \log(1 -1/n) - c\cdot(n - 1) + \Theta(n) < 0\]
+
+Hence 
+\[T(n) > c \cdot n \log (n)\]
+
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

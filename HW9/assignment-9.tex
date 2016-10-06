@@ -1,0 +1,694 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools} %More math! (For dscases)
+\usepackage{hyperref} %HTML package
+\usepackage{pgfplots} %Makes plots in LaTeX
+\usepackage{tikz} %Also tikz?
+\usepackage{bm} %makes vectors bold
+\usepackage{bbm} %Blackboard bold 1
+\usepgfplotslibrary{fillbetween}%Let's me fill between named plots
+\usepackage{graphicx} %import pics
+
+\usepackage[noend]{algpseudocode} %Algorithms
+\usepackage{algorithm}
+
+\graphicspath{ {Python\_figs/} }
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{ \normalfont\scshape} % Make all sections the default font and small caps
+
+
+\renewcommand{\thesubsection}{\alph{subsection}} %Make subsections start with letters
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+\usepackage{listings}
+\lstset{language=Python}
+
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{arrows}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	Assignment 9}
+
+\author{Benjamin Jakubowski} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Rod cutting with cost to cut}
+
+Consider a modification of the rod-cutting problem in which, in addition to a price $p_i$ for each rod, each cut incurs a fixed cost of $c$. The revenue associated with a solution is now the sum of the prices of the pieces minus the costs of making the cuts. We give a dynamic-programming algorithm to solve this modified problem.
+
+\begin{algorithmic}
+\Function{rod\_cutting\_with\_cut\_cost}{$p, n, c$}
+\State let $r[0~.~.~n]$ be a new array
+\State $r[0] = 0$ \Comment{No cut, so no cut cost incurred}
+\For {$j = 1$ to $n$}
+	\State $q = - \infty$
+	\For {$i = 1$ to $j$}
+		\If {$i < j$}
+			\State $q = \max(q, p[i] + r[j - i] - c)$ \Comment{$-c$ since one additional cut}
+		\Else \Comment{Then $i = j$, so no additional cut made}
+			\State $q = \max(q, p[j])$ \Comment{Since $p[j] = p[i] + r[j - i]$}
+		\EndIf
+	\EndFor
+	\State $r[j] = q$
+\State \Return r[n]
+\EndFor
+\EndFunction
+\end{algorithmic}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+\section{$O(n^2)$-time algorithm for increasing subsequence}
+
+We give an $O(n^2)$-time algorithm to find the longest monotonically increasing subsequence of a sequence of n numbers. The basic idea behind the algorithm is to find the LCS shared by $A$ and the array $A'$, where $A'$ is the sorted array of unique values in $A$. Note we need to ensure the values in $A'$ are unique, otherwise we would potentially find the longest monotonically non-decreasing subsequence in $A$.
+
+\begin{algorithmic}[1]
+\Function{increasing\_subsequence}{$A$}
+\State $A' =$ sorted($A$) \Comment{$O(n \lg n)$}
+\State $A' = $\texttt{delete\_duplicates}$(A)$ \Comment{$O(n)$. Needed for \emph{monotonically increasing}}
+\State \texttt{LCS}$(A, A')$ \Comment{$O(n^2)$ by CRLS page 394}
+\State \texttt{Print-LCS}$(A, A')$ \Comment{$O(n)$ by CRLS page 395}
+\EndFunction
+\end{algorithmic}
+
+This is an $O(n^2)$-time algorithm since it is dominated by the \texttt{LCS} step on line 4.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 3
+%----------------------------------------------------------------------------------------
+\section{$O(n \lg n)$-time algorithm for increasing subsequence}
+
+We give an $O(n \lg n)$-time algorithm to find the longest monotonically increasing subsequence of a sequence of $n$ numbers (stored in array $A = [a_1, \cdots, a_n]$). Before presenting the algorithm, we give a brief outline:
+\begin{itemize}
+\item The algorithm does a single pass through the $n$ elements of $A$.
+\item Each element is inserted into a Red Black tree $C$,  unless a duplicate value has already been inserted into the tree.
+\item For the $j^{th}$ element $a_j$:
+\begin{itemize}
+\item The algorithm then computes and saves the following satellite data:
+\begin{itemize}
+\item The longest monotonically increasing subsequence in $A[1:j-1]$, inclusive, to which we can append $a_j$ and maintain the property "monotonically increasing".
+\item The length of the resulting subsequence
+\end{itemize}
+\item Next, the algorithm trims the tree to maintain a key invariant, namely:\\ \\
+\emph{An in-order traversal of $C$ produces an ordering of the $j$ keys $A = [a_1, \cdots, a_j]$}
+\[k_1 < k_2 < \cdots < k_j\]
+\emph{such that}
+\[1. \qquad{} k_1.length < k_2.length < \cdots < k_j.length\]
+\emph{and}
+\[2. \qquad{} k_j.length = \textrm{Maximum length of monotonically increasing subsequence}\]
+\end{itemize}
+\item Finally, the algorithm returns $k.max().subsequence$, a maximum-length monotonically increasing subsequence of $A$.
+\end{itemize}
+
+We present the detailed algorithm before arguing that it is (i) correct, and (ii) runs in $O(n \lg n)$ time.
+
+\begin{algorithmic}[1]
+\Function{linearithmic\_max\_length\_increasing\_subsequence}{$A$}
+\State \textbf{let} $C$ be a new Red-Black Tree
+\For {$i$ in $1~.~.~n$}
+	\If {$a_i$ not already found in $C$}
+		\State $C$.insert($a_i$)
+	\State $pred$ = $C$.predecessor($a_i$)
+	\If {$pred$ is \texttt{Null}}
+		\State $a_i$.subsequence = $a_i$
+		\State $a_i$.length = 1
+	\Else
+		\State $a_i$.subsequence = $pred$.subsequence.append($a_i$)
+		\State $a_i$.length = $pred$.length + 1
+	\EndIf
+	\State $succ$ = $C$.successor($a_i$)
+	\While {$succ$ not \texttt{Null} and not $a_i$.length < $succ$.length}
+		\State $C$.delete($succ$)
+		\State $succ$ = $C$.successor($a_i$)
+	\EndWhile
+	\EndIf
+\EndFor
+\State \Return $C$.maximum().subsequence
+\EndFunction
+\end{algorithmic}
+
+To show the algorithm is correct, we must show the loop invariant:\\ \\
+\emph{An in-order traversal of $C$ produces an ordering of the $j$ keys $A = [a_1, \cdots, a_j]$}
+\[k_1 < k_2 < \cdots < k_j\]
+\emph{such that}
+\[1. \qquad{} k_1.length < k_2.length < \cdots < k_j.length\]
+\emph{and}
+\[2. \qquad{} k_j.length = \textrm{Maximum length of monotonically increasing subsequences of } A[1~.~.~j]\]
+actually holds.\\
+
+\textbf{Initialization}
+The invariant trivially holds after inserting $a_1$.\\
+\textbf{Maintenance} 
+Now assume the invariant holds prior to re-entering the \texttt{for} loop with $i = j$. Then there are two cases:
+\begin{itemize}
+\item $a_j$ already in $C$: Then the loop doesn't modify the tree. To show this maintains the loop invariant, note it clearly maintains invariant condition 1 (which held prior to re-entering the loop). Moreover, note prior to entering the loop with $i = j$
+
+\begin{align*}
+C.\textrm{predecessor}(a_j).\textrm{length} &< a_j.\textrm{length} \\
+\implies \qquad{} C.\textrm{predecessor}(a_j).\textrm{length} + 1 &\leq a_j.\textrm{length}
+\end{align*}
+
+Thus if we were to modify the tree by changing the subsequence ending with $a_j$, it would not increase the length of this $a_j$-terminated subsequence; hence, the maximum-length subsequence of of $A[1~.~.~j-1]$ is still maximal, and the invariant is maintained by not modifying the tree.
+\item $a_j$ is not already in $C$: Then the loop inserts $a_j$ into the tree- say at position $m$ in the ordering of the keys in the tree:
+\[k_1 < \cdots < k_m = a_j < \cdots < k_\ell\]
+But then
+\begin{itemize}
+\item By construction lines 7-12 ensure $k_1.length < \cdots < k_m.length  = a_j.length$.
+\item The while loop (lines 14-16) clearly maintains loop invariant for\\ $k_m = a_j < \cdots < k_\ell$, and ensures $k_\ell.length$ is maximal. 
+\end{itemize}
+\end{itemize}
+Thus, in either case the invariant is maintained.\\
+\textbf{Termination}
+After exiting the loop, $k_{\max}$.subsequence is a longest monotonically increasing subsequence in $A$. Thus, the subsequence associated with the largest element in the RedBlack tree is a maximum-length monotonically increasing subsequence of $A$. \\
+
+To analyze the runtime, we present the cost of each step in the algorithm. Note lines 4-13 the costs are presented in aggregate (over the loop), while lines 14-16 are not.\\
+
+\begin{tabular}{| c | c |}
+\hline
+\textbf{Line number(s)} & Cost \\
+\hline
+3: Initialize red-black tree & $O(n)$ \\
+\hline
+4: Check to see if $a_i$ in tree & $ n O(\lg n)$ \\
+\hline
+5: Insert $a_i$ in tree & $ n O(\lg n)$ \\
+\hline
+6: Find predecessor & $n O(\lg n)$ \\
+\hline
+7-12: Compute satellite data & $n O(1)$ \\
+\hline
+13: Find successor & $n O(1)$ \\
+\hline
+14-16: Trim tree & $O(n)$, since there are at most $n-1$ deletions from the tree \\
+\hline
+17: Return maximum subsequence & $O(\lg n)$\\
+\hline
+\end{tabular} \\
+
+Thus, overall run-time is $O(n \lg n)$.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+\section{Dynamic programming solution to neat printing problem}
+
+Consider the problem of neatly printing a paragraph with a monospaced font (all characters having the same width) on a printer. The input text is a sequence of n words of lengths $l_1, l_2, \cdots, l_n$, measured in characters. We want to print this paragraph neatly on a number of lines that hold a maximum of $M$ characters each. Our criterion of "neatness" is as follows. If a given line contains words $i$ through $j$, where $i \leq j$, and we leave exactly one space between words, the number of extra space characters at the end of the line is $M - j + i - \sum_{k = i}^j l_k$, which must be nonnegative so that the words fit on the line. We wish to minimize the sum, over all lines except the last, of the cubes of the numbers of extra space characters at the ends of lines. We give a dynamic-programming algorithm to print a paragraph of $n$ words neatly on a printer, and analyze the running time and space requirements of our algorithm. \\
+
+Our basic strategy is as follows
+\begin{itemize}
+\item First, we compute the the cost of printing a line with words $l_i, \cdots, l_j$ for every pair $i, j$ where $i \leq j$. We structure this line cost computation to handle the following edge cases:
+\begin{itemize}
+\item If the length of the line would exceed the maximum number of characters $M$, then this line should not be part of our optimal solution. Since we aim to minimize our cost function, we can encode this constraint by setting the cost of this candidate line to $\infty$.
+\item If $j = n$, then this is the last line in the paragraph. Since this line incurs no cost, we will set the cost to 0.
+\item Otherwise, the cost is the cube of the number of extra space characters at the end of the line.
+\end{itemize}
+\item Once we've found these line costs, we proceed to compute the minimum cost of printing the first $j$ words, starting with $j = 0$ and incrementing the word count until we've found the minimum for $j = n$. Note this step in the computation exploits optimal substructure of the problem.
+\item While determining the minimum costs, we additionally store the optimal line break locations. This will allow us to determine the optimal "neat" printing, and yield our final solution.
+\end{itemize}
+
+With this in mind, we proceed by presenting the algorithm. To make it more readable, we break out several helper functions. Similarly, to ease notation, we assume the words, maximum line length $M$, and number of words $n$ are global.\\
+
+\begin{algorithmic}
+\Function{compute\_candidate\_line\_cost}{$i, j$}\Comment{i is first word in line, j is last}
+\State extra\_space = $(M - j + i - \sum_{k = i}^j l_k)$
+\If {extra\_space < 0}
+	\State \Return $\infty$
+\ElsIf {j = n}
+	\State \Return 0
+\Else
+	\State \Return (extra\_space)$^3$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\begin{algorithmic}
+\Function{construct\_line\_cost\_table()}{}
+\State let line\_cost[1~.~.~$n$, 1~.~.~$n$] be a new array
+\For {$i$ in 1 to $n$}
+	\For {$j$ in $i$ to $n$}
+		\State line\_cost[$i,j$] = compute\_candidate\_line\_cost($i, j$)
+	\EndFor
+\EndFor
+\State \Return line\_cost
+\EndFunction
+\end{algorithmic}
+
+Now we're almost ready to present the main algorithm. Before we do, let min\_print\_cost$[j]$ be the minimum cost to print the first $j$ words. Then since the problem has optimal substructure, we can define this cost recursively:
+\[\textrm{min\_print\_cost}[j] = 
+\begin{cases}
+0 \textrm{ if } j = 0 \qquad{} \triangleright \textrm{Base case} \\
+\min_{1 \leq i \leq j} \left(\textrm{min\_print\_cost}[i - 1] + \textrm{line\_cost}[i,j] \right) \qquad{} \textrm{otherwise}
+\end{cases}
+\]
+
+With this recursive definition in mind, we present the main algorithm, which neatly prints the $n$ words:
+
+\begin{algorithmic}
+\Function{neatly\_print\_words()}{} \Comment{Again assume words are global}
+\State line\_cost[1~.~.~$n$, 1~.~.~$n$] = construct\_line\_cost\_table()
+\State let breaks[0~.~.~$n$] be a new array (to store line break points)
+\State let min\_print\_cost[0~.~.~$n$] be a new array (to store minimum costs)
+\State min\_print\_cost[0] = 0
+\For {$j$ in 1 to $n$}
+	\State min\_cost = $\infty$
+	\For {$i$ in 1 to $j$}
+		\State cost\_at\_$i$ = min\_print\_cost[$i - 1$] + line\_cost[$i,j$]
+		\If {cost\_at\_$i$ < min\_cost}
+			\State min\_cost = cost\_at\_$i$
+			\State breaks[$j$] = $i$
+		\EndIf
+	\EndFor
+\EndFor
+\State print\_lines(breaks)
+\EndFunction
+\end{algorithmic}
+
+Note to print the lines we call one final helper function, print\_lines, which takes an array of computed optimal line breaks and prints the corresponding lines in correct order (first to last):
+
+\begin{algorithmic}
+\Function{print\_lines}{breaks}
+\State let lines\_to\_print be a new list \Comment{We will insert lines to print at front of list}
+\State last\_word = $n$ \Comment{Last unprinted word}
+\State next\_break = breaks[last\_word] \Comment{Next place to break with minimum cost}
+\While {last\_word != next\_break} \Comment{Then not on first line to print}
+	\State lines\_to\_print.insert(" ".join(words from (next\_break + 1) to last\_word))
+	\State last\_word = next\_break
+	\State next\_break = breaks[last\_word]
+\EndWhile
+\For {line in lines\_to\_print}
+	\State \textbf{print} line
+\EndFor
+\EndFunction
+\end{algorithmic}
+
+Now we analyze the running time and space requirements of the algorithm. First, let's consider the space requirements:
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+\textbf{Object} & \textbf{Space required} \\
+\hline
+line\_cost & $O(n^2)$ \\
+\hline
+min\_print\_cost & $O(n)$ \\
+\hline
+breaks & $O(n)$ \\
+\hline
+line\_to\_print & $O(n)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Hence the overall space required is $O(n^2)$. Now let's consider the time requirements.
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+\textbf{Object} & \textbf{Time required} \\
+\hline
+\texttt{compute\_candidate\_line\_cost} & $O(1)$ \\
+\hline
+\texttt{construct\_line\_cost\_table} & $O(n^2)$ \\
+\hline
+\texttt{neatly\_print\_words} & $O(n^2)^*$ \\
+\hline
+\texttt{print\_lines} & $O(n)$ \\
+\hline
+\end{tabular} \\
+*(Dominated by the double \texttt{for} loop and \texttt{construct\_line\_cost\_table})
+\end{center}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+\section{Dynamic programming solution to edit distance}
+
+\subsection{Algorithm}
+
+Given two sequences $x[1~.~.~m]$ and $y[1~.~.~n]$ and set of transformation-operation costs, the edit distance from $x$ to $y$ is the cost of the least expensive operation sequence that transforms $x$ to $y$. We describe a dynamic-programming algorithm that finds the edit distance from $x$ to $y$ and prints an optimal operation sequence, and analyze the running time and space requirements of our algorithm.\\
+
+First, note we use an array $z$ to hold intermediate results, and indices $i$ and $j$ into $x$ and $z$ respectively. Additionally, we consider the following transformation operations, with costs specified in such a way that minimizing the objective eliminates any invalid edits:
+\begin{itemize}
+\item \textbf{Copy} a character from x to z by setting $z[j] = x[i]$ and then incrementing both $i$ and $j$. This operation examines $x[i]$, and has cost
+\[
+cost(Copy, i, j) = 
+\begin{cases}
+\infty \textrm{ if } x[i] \ne y[j] \\
+c \textrm{ otherwise (i.e. a constant copy cost)}
+\end{cases}
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{copy, i, j}
+\If {$1 \leq i \leq m, 1 \leq j \leq n$, and $x[i] = y[j]$}
+	\State \Return c
+\Else 
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\item \textbf{Replace} a character from $x$ by another character $c$, by setting $z[j] = c$, and then incrementing both $i$ and $j$. This operation examines $x[i]$, and has cost
+\[
+cost(Replace, i, j) = r \textrm{ (a constant replace cost- note we assume } c = y[j])
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{replace, i, j}
+\If {$1 \leq i \leq m$ and $1 \leq j \leq n$}
+	\State \Return c
+\Else 
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\item \textbf{Delete} a character from $x$ by incrementing $i$ but leaving $j$ alone. This operation examines $x[i]$, and has cost
+\[
+cost(Delete, i, j) = d \textrm{ (a constant delete cost)}
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{delete, i, j}
+\If {$1 \leq i \leq m$}
+	\State \Return d
+\Else 
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\item \textbf{Insert} the character $c$ into $z$ by setting $z[j] = c$ and then incrementing $j$, but leaving $i$ alone. This operation examines no characters of $x$, and has cost
+\[
+cost(Insert, i, j) = s \textrm{ (a constant insert cost)}
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{insert, i, j}
+\If {$1 \leq j \leq n$}
+	\State \Return s
+\Else 
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\item \textbf{Twiddle} (i.e., exchange) the next two characters by copying them from $x$ to $z$ but in the opposite order; we do so by setting $z[j] = x[i+1]$ and $z[j+1] = x[i]$ and then setting $i = i +2$ and $j = j + 2$. This operation examines $x[i]$ and $x[i+1]$ and has cost
+\[
+cost(Twiddle, i, j) = 
+\begin{cases}
+\infty \textrm{ if } x[i] \ne y[j+1] \textrm{ or } x[i+1] \ne y[j]\\
+t \textrm{ otherwise (i.e. a constant twiddle cost)}
+\end{cases}
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{twiddle, i, j}
+\If {x[i] = y[j+1], x[i+1] = y[j+1], $2 \leq i + 1 \leq m$ and $2 \leq j + 1 \leq n$}
+	\State \Return t
+\Else
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+
+\item \textbf{Kill} the remainder of $x$ by setting $i = m + 1$. This operation examines all characters in $x$ that have not yet been examined. This operation, if performed, must be the final operation- thus it has cost
+\[
+cost(Kill, i, j) = 
+\begin{cases}
+\infty \textrm{ if } j \ne n + 1 \qquad{} \textrm{(haven't finished editing }$x$\textrm{ to }$y$)\\
+k \textrm{ otherwise (i.e. a constant kill cost)}
+\end{cases}
+\]
+We can implement this cost function as\\
+\begin{algorithmic}
+\Function{cost}{kill, i, j}
+\If {j = n+1 and $1\leq i \leq$ m}
+	\State \Return k
+\Else
+	\State \Return $\infty$
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{itemize}
+
+With those cost functions specified, we now exploit the optimal substructure of this problem. Specifically, let
+\[(x, z_0) \stackrel{E_1}{\rightarrow} (x, z_1) \stackrel{E_2}{\rightarrow} \cdots \stackrel{E_{k-1}}{\rightarrow} (x, z_{k-1})\stackrel{E_k}{\rightarrow} (x, z_k = y) \]
+be an optimal (i.e. cost-minimizing) sequence of edits from $x$ to $y$. Then note
+\[(x, z_0) \stackrel{E_1}{\rightarrow} (x, z_1) \stackrel{E_2}{\rightarrow} \cdots \stackrel{E_{k-1}}{\rightarrow} (x, z_{k-1})\]
+is itself a cost-minimizing sequence of edits from $x$ to $z_{k-1}$ (by the obvious cut and paste argument). Moreover, note $z_{k-1}$ is some prefix of $y$. \\
+
+Now let $C[i, j]$ be the minimum edit cost to increment the pointers to the values $i, j$. Then (since we initialize with $i = 1$ and $j = 1$), we have $C[1, 1]  = 0$. Additionally, note editing is complete when $j = n + 1$ and $i = m + 1$. Thus, we have
+\[
+C[i,j] = \begin{cases}
+0 \textrm{ if } i, j = 1 \\
+\infty \textrm{ if } i \textrm{ or } j \leq 0 \qquad{} \triangleright \textrm{To handle edge cases}\\
+\min
+\begin{cases}
+C[i - 1, j - 1] + cost(Copy, i - 1, j - 1) \\
+C[i - 1, j - 1] + cost(Replace, i - 1, j - 1) \\
+C[i - 1, j] + cost(Delete, i - 1, j) \\
+C[i, j-1] + cost(Insert, i, j) \\
+C[i-2, j-2] + cost(Twiddle, i-2, j-2) \\
+\textrm{if } j = n + 1 \texttt{ and } i = m + 1: \\
+\qquad{} C[i - k, j] + cost(kill, i - k, j) \textrm{ for each } k \in \{1, \cdots, i-1\} \\
+\end{cases}\end{cases}
+\]
+
+Now that we've defined the cost of each operation for each $(i, j) \in \{1, \cdots, m\} \times \{1, \cdots, n\}$, and have a recursive definition of $C[i,j]$, we are ready to implement the dynamic programming algorithm to find the minimum edit distance. Our approach is as follows
+\begin{itemize}
+\item First, we will compute $(m + 1) \times (n + 1)$ tables with costs for each operation for each pair of possible index values $(i, j) \in \{1, \cdots, m + 1\} \times \{1, \cdots, n + 1\}$.
+\item Second, we will compute minimum edit distance for each prefix subsequence $C[i, j]$, storing the operations used in a separate table $Op[i,j]$.
+\item  Finally, we will follow the operation chain from $C[m + 1, n + 1]$ to complete the algorithm and print an optimal operation sequence.
+\end{itemize}
+Note throughout we assume $x$, $y$, $z$, $m$, $C$, and $Op$ and $n$ are global (or at least in visible), just to have cleaner notation and avoid having to pass these variables as function arguments. Additionally, we break out a number of helper functions to clarify the main algorithm \texttt{edit\_distance}. First, we present the main algorithm:\\
+
+\textbf{Main algorithm \texttt{edit\_distance}}\\
+
+\begin{algorithmic}
+\Function{edit\_distance()}{}
+\State \texttt{make\_operation\_cost\_tables()}
+\State Initialize $m + 1 \times n + 1$ array Op to store optimal operations.
+\State Initialize $(m + 3) \times (n + 3)$ array C \Comment{Need extra rows/cols for $\infty$ edge-cases}
+\For {$j = -1$ to $n + 1$}
+	\State C[-1, j] = $\infty$
+	\State C[0, j] = $\infty$
+\EndFor
+\For {$i = 1$ to $m + 1$}
+	\State C[i, -1] = $\infty$
+	\State C[i, 0] = $\infty$
+\EndFor
+\State C[1,1] = 0
+\State Op[1,1] = Null
+\For {$i = 1$ to $m + 1$} \Comment{Now fill in tables}
+	\For {$j  = 1$ to $n + 1$}
+		\If {$i \ne 1$ and $j \ne 1$}
+			\State C[i,j],  Op[i,j] = \texttt{get\_min\_and\_op}(i, j)
+		\EndIf
+	\EndFor
+\EndFor
+\State \textbf{print} "Edit distance between $x$ and $y$ = $C[m + 1, n + 1]$".
+\State \texttt{follow\_and\_print\_edit\_path()}
+\EndFunction
+\end{algorithmic}
+
+Next, we present three helper procedures- \texttt{make\_operation\_cost\_tables}, \texttt{get\_min\_and\_op}, and \texttt{follow\_and\_print\_edit\_path}.\\
+
+\begin{algorithmic}
+\Function{make\_operation\_cost\_tables()}{}
+\State Initialize $m + 1 \times n + 1$ arrays copy\_cost, replace\_cost, delete\_cost, insert\_cost, twiddle\_cost, and kill\_cost 
+\For {$i$ in 1 to $m + 1$}
+	\For {$j$ in 1 to $n + 1$}
+		\State copy\_cost[$i,j$] = cost(Copy $i,j$)
+		\State replace\_cost[$i,j$] = cost(Replace $i,j$)
+		\State delete\_cost[$i,j$] = cost(Delete $i,j$)
+		\State insert\_cost[$i,j$] = cost(Insert $i,j$)
+		\State twiddle\_cost[$i,$j] = cost(Twiddle $i,j$)
+		\State kill\_cost[$i,$j] = cost(Kill $i,j$)
+	\EndFor
+\EndFor
+\EndFunction
+\end{algorithmic}
+
+\begin{algorithmic}
+\Function{get\_min\_and\_op}{i, j}\Comment{Assume arrays C, S in parent scope}
+\State q = $\infty$
+\If {$C[i - 1, j - 1] + cost(Copy, i-1, j-1) < q$}
+	\State $q = C[i - 1, j - 1] + cost(Copy, i - 1, j - 1)$
+	\State best\_op = Copy
+	\State $parent = (i - 1, j - 1)$
+\EndIf
+\If {$C[i - 1, j - 1] + cost(Replace, i - 1, j - 1) < q$}
+	\State $q = C[i - 1, j - 1] + cost(Replace, i - 1, j - 1)$
+	\State best\_op = Replace	
+	\State $parent = (i - 1, j - 1)$
+\EndIf
+\If {$C[i - 1, j] + cost(Delete, i -1, j) < q$}
+	\State $q = C[i - 1, j] + cost(Delete, i -1, j)$
+	\State best\_op = Delete	
+	\State $parent = (i - 1, j)$
+\EndIf
+\If {$C[i, j - 1] + cost(Insert, i, j - 1) < q$}
+	\State $q = C[i, j - 1] + cost(Insert, i, j - 1)$
+	\State best\_op = Insert	
+	\State $parent = (i, j - 1)$
+\EndIf
+\If {$C[i - 2, j - 2] + cost(Twiddle, i - 2, j - 2) < q$}
+	\State $q = C[i - 2, j - 2] + cost(Twiddle, i - 2, j - 2)$
+	\State best\_op = Copy	
+	\State $parent = (i - 2, j - 2)$
+\EndIf
+\If {$j = n+1$ and $i = m + 1$}
+	\For {$k = 1$ to $i - 1$} 
+		\If {$C[i - k, j] + cost(Kill, i - k + 1, j) < q$}
+			\State $q = C[i - k, j] + cost(Kill, i - k + 1, j)$
+			\State best\_op = Kill	
+			\State $parent = (i - k, j)$
+		\EndIf
+	\EndFor
+\EndIf
+\State $C[i, j] = q$
+\State $S[i, j]$ = [best\_op, $parent$] \Comment{Save best\_op and $parent$ as nested array in S}
+\EndFunction
+\end{algorithmic}
+
+\begin{algorithmic}
+\Function{follow\_and\_print\_edit\_path()}{}
+\State Initialize edit\_path as a list to store the edit path
+\State $parent$ = (m+1, n + 1)
+\While {$parent \ne (1, 1)$}
+	\State edit\_path.insert(S[$parent$][0]) \Comment{best\_op first element of S[$parent$]}
+	\State $parent$ = S[$parent$][1]) \Comment{parents seconds element of S[$parent$]}
+\EndWhile
+\State step\_num = 1
+\State next\_step = edit\_path.head
+\For {step in edit\_path}
+	\State \textbf{print} step
+\EndFor
+\EndFunction
+\end{algorithmic}
+
+Now that we've presented the algorithm, plus all necessary helper functions/procedures, we analyze the running time and space requirements.
+
+First, space:
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+\textbf{Object} & \textbf{Space required} \\
+\hline
+\texttt{copy\_cost} & $O(mn)$ \\
+\hline
+\texttt{replace\_cost} & $O(mn)$ \\
+\hline
+\texttt{delete\_cost} & $O(mn)$ \\
+\hline
+\texttt{insert\_cost} & $O(mn)$ \\
+\hline
+\texttt{twiddle\_cost} & $O(mn)$ \\
+\hline
+\texttt{kill\_cost} & $O(mn)$ \\
+\hline
+\texttt{S} & $O(mn)$ \\
+\hline
+\texttt{Op} & $O(mn)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Next, time:
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+\textbf{Procedure/statement} & \textbf{Time cost} \\
+\hline
+\texttt{make\_operation\_cost\_tables} & $O(mn)$ \\
+\hline
+\texttt{get\_min\_cost\_and\_op} & $O(1)$, but called $O(mn)$ times \\
+\hline
+\texttt{follow\_and\_print\_edit\_path} & $O(m + n)$ (since at most $O(m + n)$ operations in paths) \\
+\hline
+\end{tabular}
+\end{center}
+
+Thus, the main algorithm \texttt{edit\_distance} is $O(mn)$.
+
+\subsection{DNA sequence similarity}
+
+Finally, we explain how to cast the problem of finding an optimal DNA alignment as an edit distance problem using a subset of the transformation operations copy, replace, delete, insert, twiddle, and kill. First recall (from CLRS) that we align two sequences $x$ and $y$ consists of inserting spaces at arbitrary locations in the two sequences (including at either end) so that the resulting sequences $x'$ and $y'$ have the same length but do not have a space in the same position (i.e., for no position $j$ are both $x'[j]$ and $y'[j]$ spaces). Then we assign a scores to each position. Position $j$ receives a score as follows:
+\begin{itemize}
+\item +1 if $x'[j] = y'[j]$ and neither is a space
+\item -1 if $x'[j] \ne y'[j]$ and neither is a space
+\item -2 if either $x'[j]$ or $y'[j]$ is a space
+\end{itemize}
+Finally, we sum the scores at each position to obtain the score for the alignment. \\
+We can cast this as an edit distance problem quite simply. Specifically,
+\begin{itemize}
+\item We view the problem is editing $x$ to $y$. 
+\item Next we drop the operations kill and twiddle. Note if we wanted to use an out-of-the-box implementation of the edit distance algorithm (that takes costs as arguments), we could simply set the cost of these operations to $\infty$. 
+\item Next, we note that inserting a space in $x$ (such that $x'[j]$ is a space) is equivalent to inserting $y[j]$ in for $z[j]$. Based on this observation, we set the insert cost to 2 (the cost of $x'[j]$ being a space).
+\item Similarly, we note that inserting a space in $y$ (such that $y'[j]$ is a space) is equivalent to deleting $x[i]$. Based on this observation, we set the delete cost to 2 (the cost of $y'[j]$ being a space).
+\item Next, we note $x'[j] = y'[j]$ is equivalent to a copy operation. Since this indicates a positive match between the sequences $x$ and $y$, we set the cost of the copy operation to $-1$ (such that a copy operations decreases the overall cost $C[i,j]$).
+\item Finally, we note $x'[j] \ne y'[j]$ is equivalent to a replace operation. Thus we set the cost of the replace operation to 1.
+\end{itemize}
+
+With these values set for operation costs, we can reduce sequence alignment to edit distance.
+
+%----------------------------------------------------------------------------------------
+\end{document}

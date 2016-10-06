@@ -1,0 +1,14 @@
+Running rabin-karp-matcher with
+T = 3141592653589793, P = 26, and q = 11
+
+Spurious hit at shift  3
+with pattern  15
+
+Spurious hit at shift  4
+with pattern  59
+
+Spurious hit at shift  5
+with pattern  92
+
+Pattern occurs at shift  6
+with pattern  26

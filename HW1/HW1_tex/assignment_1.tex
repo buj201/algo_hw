@@ -1,0 +1,351 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools} %More math! (For dscases)
+\usepackage{hyperref} %HTML package
+\usepackage{pgfplots} %Makes plots in LaTeX
+\usepackage{tikz} %Also tikz?
+\usepackage{bm} %makes vectors bold
+\usepackage{bbm} %Blackboard bold 1
+\usepgfplotslibrary{fillbetween}%Let's me fill between named plots
+\usepackage{graphicx} %import pics
+
+\usepackage[noend]{algpseudocode} %Algorithms
+\usepackage{algorithm}
+
+\graphicspath{ {Python_figs/} }
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{ \normalfont\scshape} % Make all sections the default font and small caps
+
+
+\renewcommand{\thesubsection}{\alph{subsection}} %Make subsections start with letters
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\usepackage{listings}
+\lstset{language=Python}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	Assignment 1}
+
+\author{Benjamin Jakubowski} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Computing index of maximum element in array}
+
+An algorithm to compute the index of the maximum element in an array is given below:
+
+\begin{algorithm}
+\caption{Index of maximum element in array}
+\label{maxel}
+\begin{algorithmic}[1]
+\Function{Max\_index}{$A$}
+	\State max\_val = $A[1]$
+	\State max\_index = 1
+	\For {j in $[2, \cdots, A.length]$}:
+		\State candidate = $A$[j]
+		\If {max\_val < candidate}:
+			\State max\_val = candidate
+			\State max\_index = j
+		\EndIf
+	\EndFor
+	\Return max\_index
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+The loop invariant is as follows; at the start of the \textbf{for} loop of lines 4-8, max\_val is greater than or equal to all elements in the subarray $A[1, \cdots, j - 1]$. We now use this invariant to demonstrate the correctness of this algorithm.
+
+\begin{itemize}
+\item \textbf{Initialization}: First, we must show the loop invariant holds before the first loop iteration, when $j = 2$. The subarray $A[1, \cdots, j - 1] = A[1, \cdots, 2 - 1]$ is just the single element $A[1]$. Since max\_val was initialized to $A[1]$ in line 2, the loop invariant clearly holds.
+\item \textbf{Maintainence}: Next, we must show that each iteration maintains the loop invariant. We have two cases, corresponding to the if-statement in line 4:
+\begin{itemize}
+\item \textbf{max\_val < candidate}: Then candidate must be greater than or equal to all the elements in the subarray $A[1, \cdots, j-1]$. Thus, setting max\_val to candidate in line 7 ensures max\_val is greater than or equal to all elements in the subarray $A[1, \cdots, j]$, maintaining the loop invariant before the start of the next iteration.
+\item \textbf{max\_val $\geq$ candidate}: Then the if-block (lines 7-8) is not executed, and before the start of the next iteration max\_val is greater than or equal to all elements in the subarray $A[1, \cdots, j]$ (since it was assumed to be greater than or equal to all elements in $A[1, \cdots, j-1]$, as well as $A[j]$).
+\end{itemize}
+\item \textbf{Termination}: Finally, the loop terminates when $j = n + 1 > A.length = n$. Note at the start of this final iteration, max\_val is greater than or equal to all elements in $A[1, \cdots, j - 1] = A[1, \cdots, n + 1 - 1] = A[1, \cdots, n]$. Hence we conclude the algorithm finds the maximum value in the array $A$, and returns its corresponding index.
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+
+\section{Lucas numbers}
+
+The Lucas numbers as defined as follows:
+\[
+L_n =
+\begin{cases}
+2 & \qquad{} \textrm{if } n=0\\
+1 & \qquad{} \textrm{if } n=1\\L
+L_{n-1} + L+{n-2} & \qquad{} \textrm{if } n>1
+\end{cases}
+\]
+
+We prove by induction the closed-form expression for the $n$-th Lucas number:
+\[L_n = \varphi^n + (1-\varphi)^n\]
+where $\varphi$ is the golden ratio:
+\[\varphi = \frac{1 + \sqrt{5}}{2}\]
+
+First, we prove two base cases:
+
+\textbf{Base case 1}: Consider n=2. Then
+\begin{align*}
+L_{n = 2} &= L_{n - 1} + L_{n - 2} \\
+	&= L_{2 - 1} + L_{2 - 2} \\
+	&= L_{1} + L_{0} \\
+	&= 1 + 2 = 3
+\end{align*}
+Also, 
+\begin{align*}
+\varphi^2 + (1-\varphi)^2 &= \varphi^2 + 1 - 2\varphi + \varphi^2 \\ 
+	&= 2\varphi^2 - 2\varphi + 1 \\
+	&= \frac{(1+\sqrt{5})^2}{2} - (1+\sqrt{5}) + 1 \\
+	&= \frac{1+2\sqrt{5} +5}{2} - \sqrt{5} \\
+	&= \frac{6}{2} = 3\\
+\end{align*}
+
+\textbf{Base case 2}: Consider n=3. Then
+\begin{align*}
+L_{n = 3} &= L_{3 - 1} + L_{3 - 2} \\
+	&= L_{2} + L_{1} \\
+	&= 3 + 1 = 4
+\end{align*}
+Also, 
+\begin{align*}
+\varphi^3 + (1-\varphi)^3 &= \varphi^3 + 1 - 3\varphi + 3\varphi^2 - \varphi^3 \\ 
+	&= 1 - 3\varphi +3 \varphi^2 \\
+	&= 1 - 3 \cdot \frac{1+\sqrt{5}}{2} + 3 \left(\frac{1+\sqrt{5}}{2}\right)^2 \\
+	&= 1 - \frac{3}{2} - \frac{3\sqrt{5}}{2} +\frac{3}{4} + \frac{3\sqrt{5}}{2} + \frac{3\cdot5}{4} \\
+	&= -\frac{1}{2} + \frac{18}{4} = 4\\
+\end{align*}
+
+Next, we proceed to the induction step. Assume
+\[L_{n} = \varphi^n + (1 - \varphi)^n\]
+\[L_{n+1} = \varphi^{n+1} + (1 - \varphi)^{n+1}\]
+We need to show
+\[L_{n+2} = \varphi^{n+2} + (1 - \varphi)^{n+2}\]
+
+First, note
+\begin{align*}
+\varphi^2 &= \left(\frac{1 + \sqrt{5}}{2}\right)^2 \\
+	&= \frac{1 + 2\sqrt{5}+5}{4} \\
+	&= \frac{6 + 2\sqrt{5}+5}{4} \\
+	&= \frac{3 + \sqrt{5}}{2} \\
+	&= 1 + \frac{1 + \sqrt{5}}{2} \\
+	&= 1 + \varphi
+\end{align*}
+Then
+\begin{align*}
+\varphi^{k+2} &= \varphi^k \cdot \varphi^2 \\
+	&= \varphi^k \cdot (1 + \varphi) \\
+	&= \varphi^k + \varphi^{k+1}
+\end{align*}
+Also, 
+\begin{align*}
+(1 - \varphi)^2 &= \left(1 - \frac{1 + \sqrt{5}}{2}\right)^2 \\
+	&= 1 - 2\cdot \frac{1 + \sqrt{5}}{2} + \left(\frac{1 + \sqrt{5}}{2}\right)^2 \\
+	&= 1 -1 - \sqrt{5} + \frac{1 + 2\sqrt{5}+5}{4} \\
+	&= - \sqrt{5} + \frac{3}{2} + \frac{\sqrt{5}}{2} \\
+	&= \frac{3- \sqrt{5}}{2} \\
+	&= 2 - \frac{1- \sqrt{5}}{2} \\
+	&= 1 + (1 - \varphi)
+\end{align*}
+So
+\begin{align*}
+(1 - \varphi)^{k+2} &= (1 - \varphi)^k (1 - \varphi)^2 \\
+	&= (1 - \varphi)^k \left(1 + (1 - \varphi)\right) \\
+	&= (1 - \varphi)^k +  (1 - \varphi)^{k+1}
+\end{align*}
+
+Now we put these two expressions together to complete the proof:
+
+\begin{align*}
+L_{n+2} &= L_{n+1} + L_{n} \\
+	&= \varphi^{n+1} + (1 - \varphi)^{n+1} +  \varphi^{n} + (1 - \varphi)^{n}\\
+	&= \varphi^{n+1}  +  \varphi^{n} + (1 - \varphi)^{n+1} + (1 - \varphi)^{n}\\
+	&= \varphi^{n+2} + (1 - \varphi)^{n+2}
+\end{align*}
+
+completing the proof.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 3
+%----------------------------------------------------------------------------------------
+
+\section{Properties of $\Theta$}
+\subsection{Being in $\Theta$ is an equivalence relation}
+
+To prove that being in $\Theta$ is an equivalence relation, we must show it is reflexive, symmetric, and transitive. We first show reflexivity.
+
+Consider a function $f$, and assume it is asymptotically non-negative. Then let $c_1 = 1/2$, $c_2 = 3/2$, and $n_0$ be some constant such that $f(n) \geq 0$ for all $n > n_0$ (by asymptotic non-negativity). Then
+\[0 \leq c_1 f(n) \leq f(n) \leq 3/2 f(n) \qquad{} \forall n \geq n_0\]
+Thus, $f(n) \in \Theta(f(n))$.
+
+Now we show symmetry- consider two functions $f$ and $g$. First, assume $f \in \Theta(g)$. Then there exists $c_1, c_2, n_0 > 0$ such that
+\[0 \leq c_1 g(n) \leq f(n) \leq c_2g(n) \qquad{} \forall n > n_0\]
+Then note
+\[0 \leq g(n) \leq 1/c_1 f(n) \qquad{} \forall n > n_0\]
+\[0 \leq 1/c_2 f(n) \leq g(n) \qquad{} \forall n > n_0\]
+So, putting these inequalities together yeilds
+\[0 \leq 1/c_2 f(n) \leq g(n) \leq 1/c_1 f(n) \qquad{} \forall n > n_0\]
+Thus $g \in \Theta(f(n))$.
+
+Now note the proof is essentially equivalent for the other direction (namely, assuming $g \in \Theta(f)$, that $g \in \Theta(f)$); all we'd do is switch the function names and use new constants. Thus this proof is omitted.
+
+Finally, we show transitivity.
+
+Assume $f \in \Theta(g)$ and $g \in \Theta(h)$. We show $f \in \Theta(h)$. Since $f \in \Theta(g)$, there exists $c_1, c_2, n_0 > 0$ such that
+\[0 \leq c_1 g(n) \leq f(n) \leq c_2 g(n) \qquad{} \forall n > n_0\]
+Since $g \in \Theta(h)$, there exists $c_3, c_4, n_1 > 0$ such that
+\[0 \leq c_3 h(n) \leq g(n) \leq c_4 h(n) \qquad{} \forall n > n_1\]
+But then substituting yields
+\[0 \leq c_1\cdot c_3h(n) \leq f(n) \leq c_2 \cdot c_4 h(n) \qquad \forall n\geq \max\{n_0, n_1\}\]
+Hence $f \in \Theta(h)$.
+
+Thus, having shown reflexivity, symmetry, and transitivity, we've shown $\Theta$ is an equivalence relation.
+
+\subsection{Maximum of two functions is in $\Theta$ of their sum}
+
+Consider $f_1$ and $f_2$ (again assuming asymptotic non-negativity). We aim to show
+\[\max \{f_1, f_2\} \in \Theta(f_1 + f_2)\]
+
+First, let $f =\max\{f_1, f_2\}$ to easy notation. Then note
+\[0 \leq f(n) \leq f_1(n) + f_2(n) \qquad \forall n > n_0\]
+(again using asymptotic non-negativity to chose $n_0$ such that for all $n>n_0, f_1(n) \geq 0$ and $f_2(n) \geq 0$).
+
+Moreover, note
+\[0 \leq 1/2 \left(f_1(n) +f_2(n)\right) \leq f(n) \qquad{} \forall n>n_0\]
+Since either $f(n) = f_1(n) > f_2(n)$ or $f(n) = f_2(n) > f_1(n)$. But then,
+\[0 \leq 1/2 \left(f_1(n) +f_2(n)\right) \leq f(n) \leq f_1(n) + f_2(n) \qquad \forall n > n_0\]
+Hence $f(n) = \max\{f_1(n), f_2(n)\} \in \Theta\left(f_1(n) + f_2(n)\right)$.
+
+
+\subsection{Sum of two functions is in $\Theta$ of their maximum}
+
+Now we show the sum of two functions is in $\Theta$ of their maximum in two lines!
+\begin{enumerate}
+\item Being in $\Theta$ is an equivalence relation, so it's symmetric.
+\item Thus $\max\{f_1(n), f_2(n)\} \in \Theta\left(f_1(n) + f_2(n)\right) \implies \left(f_1(n) + f_2(n)\right) \in \Theta(\max\{f_1(n), f_2(n)\})$.
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+
+\section{Ranking function forms by order of growth}
+
+The given forms are ranked in order of growth below (from slowest to fastest):
+\begin{enumerate}
+\item Constant
+\item Logarithmic
+\item Linear
+\item Linearithmic
+\item Polynomial
+\item Exponential
+\end{enumerate} 
+
+To prove this ranking, we proceed pairwise. Throughout, recall $g(n) \in o(f(n))$ if
+\[\lim_{n \to \infty} \frac{g(n)}{f(n)} = 0\]
+Additionally, note we are treating logs as $\log_e$, since a change of basis only introduces a constant term. Additionally, we are ignoring all constants (since they don't change the limiting behavior). 
+
+\subsubsection*{Constant vs. Logarithmic}
+Let $g(n)=c$ and $f(n) = \log(n)$. Then
+\begin{align*}
+\lim_{n \to \infty} \frac{g(n)}{f(n)} &= \lim_{n \to \infty} \frac{c}{\log(n)} = 0
+\end{align*}
+
+\subsubsection*{Logarthimic vs. Linear}
+Let $g(n)=\log(n)$ and $f(n) = n$. Then
+\begin{align*}
+\lim_{n \to \infty} \frac{g(n)}{f(n)} &= \lim_{n \to \infty} \frac{\log(n)}{n} \\
+	&= \lim_{n \to \infty} \frac{(\log(n))'}{(n)'} \qquad{} \textrm{by l'Hopital's rule}\\
+	&= \lim_{n \to \infty} \frac{1}{n} = 0
+\end{align*}
+
+\subsubsection*{Linear vs. Linearithmic}
+Let $g(n)=n$ and $f(n) = n\log(n)$. Then
+\begin{align*}
+\lim_{n \to \infty} \frac{g(n)}{f(n)} &= \lim_{n \to \infty} \frac{n}{n\log(n)} \\
+	&= \lim_{n \to \infty} \frac{1}{\log(n)} = 0
+\end{align*}
+
+\subsubsection*{Linearithmic vs. Polynomial}
+Let $g(n)=n\log(n)$ and $f(n) = n^d$ for some $d>1$. Then
+\begin{align*}
+\lim_{n \to \infty} \frac{g(n)}{f(n)} &= \lim_{n \to \infty} \frac{n\log(n)}{n^d} \\
+	&= \lim_{n \to \infty} \frac{\log(n)}{n^{d-1}} \\
+	&= \lim_{n \to \infty} \frac{(\log(n))'}{(n^{d-1})'} \\
+	&= \lim_{n \to \infty} \frac{n^{-1}}{(d-1)n^{d-2}} \\
+	&= \lim_{n \to \infty} \frac{1}{d-1}n^{-1-(d-2)} \\
+	&= \lim_{n \to \infty} \frac{1}{d-1}n^{1-d} = 0 \qquad{} \textrm{since d>1}\\
+\end{align*}
+
+
+\subsubsection*{Polynomial vs. Exponential}
+Let $g(n)=n^d$ for some $ d > 1$ and $f(n) = a^n$ for some $a>1$. Then
+\begin{align*}
+\lim_{n \to \infty} \frac{g(n)}{f(n)} &= \lim_{n \to \infty} \frac{n^d}{a^n} \\
+	&= \lim_{n \to \infty} \frac{(n^d)'}{(a^n)'} \\
+	&= \lim_{n \to \infty} \frac{d \cdot n^{d-1}}{\log(a) a^{n}} \\
+	& \qquad{}  \vdots \qquad{} \lceil d \rceil \textrm{ more applications of l'Hopital's Rule} \\
+	&= \lim_{n \to \infty} \frac{k\cdot n^{d - \lceil d \rceil - 1}}{\log(a)^{\lceil d \rceil+1}a^{n}} \qquad{} \textrm{where } k \textrm{ is just a constant} \\
+	&= 0	
+\end{align*}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
